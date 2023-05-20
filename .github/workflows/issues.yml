@@ -9,7 +9,7 @@ jobs:
         if: ${{ !github.event.issue.pull_request }}
         runs-on: ubuntu-latest 
         outputs:
-            author: ${{ steps.fc.outputs.auth }}
+            author: ${{ steps.fc.outputs.auth}}
         steps:
           - uses: actions/checkout@v3
           - name: finds the comment
@@ -32,7 +32,7 @@ jobs:
           - name: 'Auto-assign issue'
             uses: pozil/auto-assign-issue@v1
             with:
-                assignees: ${{needs.find-comment.outputs.auth}}
+                assignees: ${{needs.find-comment.outputs.author}}
                 numOfAssignee: 1
                 allowSelfAssign: true
 
@@ -45,5 +45,5 @@ jobs:
           - name: 'Comment on issue'
             uses: ben-z/actions-comment-on-issue@1.0.2
             with:
-                message: "Assigned issue to ${{ needs.find-comment.outputs.auth }}"
+                message: "Assigned issue to ${{ needs.find-comment.outputs.author}}"
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
