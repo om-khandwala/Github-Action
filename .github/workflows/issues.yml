@@ -1,0 +1,46 @@
+name: Issue assignment
+
+on:
+    issue_comment:
+        types: [created]
+
+jobs:
+    find-comment:
+        name: Find Comment
+        if: ${{ !github.event.issue.pull_request }}
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+          - name: finds the comment
+            uses: peter-evans/find-comment@v2
+            id: fc
+            with:
+                issue-number: ${{github.event.issue.number}}
+                body-includes: assign
+          - run:
+                echo "AUTHOR=${{ steps.fc.outputs.comment-author }}" >> "$GITHUB_ENV"
+          
+    auto-assign:  
+        name: assign the issue
+        needs: find-comment
+        if: ${{ !github.event.issue.pull_request }}
+        runs-on: ubuntu-latest
+        steps: 
+          - uses: actions/checkout@v3
+          - name: 'Auto-assign issue'
+            uses: pozil/auto-assign-issue@v1
+            with:
+                assignees: ${{env.AUTHOR}}
+                numOfAssignee: 1
+                allowSelfAssign: true
+    message-assignee:
+        name: replies with message
+        needs: auto-assign
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+          - name: 'Comment on issue'
+            uses: ben-z/actions-comment-on-issue@1.0.2
+            with:
+                message: "Assigned issue to ${{ env.AUTHOR }}"
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
