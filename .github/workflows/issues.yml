@@ -20,6 +20,7 @@ jobs:
             author: ${{ steps.fc.outputs.comment-author}}
           
     auto-assign:  
+        permissions: write-all
         name: assign the issue
         needs: find-comment
         if: ${{ !github.event.issue.pull_request }}
