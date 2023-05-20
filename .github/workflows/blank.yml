@@ -1,0 +1,22 @@
+name: CI
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  comment_pr:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Welcome User
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Welcome to our community. Thanks for contributing. We will check and merge shortly 
+            ![secret](https://i.imgur.com/YkOAdJV_d.webp?maxwidth=520&shape=thumb&fidelity=high)
+
+
+    env:
+      PR_NUMBER: ${{ github.event.number }}
