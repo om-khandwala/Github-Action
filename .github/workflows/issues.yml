@@ -3,13 +3,13 @@ name: Issue assignment
 on:
     issue_comment:
         types: [created]
-env:
-    AUTHOR: ""
 jobs:
     find-comment:
         name: Find Comment
         if: ${{ !github.event.issue.pull_request }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-latest 
+        outputs:
+            author: ${{ steps.fc.outputs.test }}
         steps:
           - uses: actions/checkout@v3
           - name: finds the comment
@@ -19,7 +19,7 @@ jobs:
                 issue-number: ${{github.event.issue.number}}
                 body-includes: assign
           - run:
-                echo "${{env.AUTHOR}}=${{ steps.fc.outputs.comment-author }}"
+                echo "auth=${{ steps.fc.outputs.comment-author }}" >> $GITHUB_OUTPUT
                 
           
     auto-assign:  
@@ -32,17 +32,18 @@ jobs:
           - name: 'Auto-assign issue'
             uses: pozil/auto-assign-issue@v1
             with:
-                assignees: ${{env.AUTHOR}}
+                assignees: ${{needs.find-comment.outputs.author}}
                 numOfAssignee: 1
                 allowSelfAssign: true
+
     message-assignee:
         name: replies with message
-        needs: auto-assign
+        needs: [auto-assign, find-comment]
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v3
           - name: 'Comment on issue'
             uses: ben-z/actions-comment-on-issue@1.0.2
             with:
-                message: "Assigned issue to ${{ env.AUTHOR }}"
+                message: "Assigned issue to ${{ needs.find-comment.outputs.author }}"
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
