@@ -8,8 +8,6 @@ jobs:
         name: Find Comment
         if: ${{ !github.event.issue.pull_request }}
         runs-on: ubuntu-latest 
-        outputs:
-            author: ${{ steps.fc.outputs.auth}}
         steps:
           - uses: actions/checkout@v3
           - name: finds the comment
@@ -18,9 +16,8 @@ jobs:
             with:
                 issue-number: ${{github.event.issue.number}}
                 body-includes: assign
-          - run:
-                echo "auth=${{ steps.fc.outputs.comment-author }}" >> $GITHUB_OUTPUT
-                
+        outputs:
+            author: ${{ steps.fc.outputs.comment-author}}
           
     auto-assign:  
         name: assign the issue
