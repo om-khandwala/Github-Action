@@ -35,6 +35,7 @@ jobs:
                 allowSelfAssign: true
 
     message-assignee:
+        permissions: write-all
         name: replies with message
         needs: [auto-assign, find-comment]
         runs-on: ubuntu-latest
