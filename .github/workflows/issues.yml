@@ -3,7 +3,8 @@ name: Issue assignment
 on:
     issue_comment:
         types: [created]
-
+env:
+    AUTHOR: ""
 jobs:
     find-comment:
         name: Find Comment
@@ -18,7 +19,8 @@ jobs:
                 issue-number: ${{github.event.issue.number}}
                 body-includes: assign
           - run:
-                echo "AUTHOR=${{ steps.fc.outputs.comment-author }}" >> "$GITHUB_ENV"
+                echo "${{env.AUTHOR}}=${{ steps.fc.outputs.comment-author }}"
+                
           
     auto-assign:  
         name: assign the issue
